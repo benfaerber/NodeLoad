@@ -37,10 +37,24 @@ app.use(
 app.set('view engine', 'ejs');
 
 app.get('/', async (req, res) => {
-	res.render('index');
+	if (req.session.loggedIn) {
+		res.render('index');
+	} else {
+		res.render('login');
+	}
 });
 
-app.post('/upload', (req, res) => {
+app.post('/', (req, res) => {
+	let {username, password} = req.body;
+	console.log(username, password);
+	console.log(process.env);
+	res.writeHead(302, {
+		'Location': '/'
+	})
+	res.end();
+})
+
+app.post('/api/upload', (req, res) => {
 	if (!req.files || Object.keys(req.files).length === 0) {
 		return res.status(400).send('No files were uploaded.');
 	}

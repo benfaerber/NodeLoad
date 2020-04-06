@@ -2,7 +2,7 @@ $(() => {
 	$('#upload-btn').click(() => {
     onUpload();
 		$.ajax({
-			url: '/upload',
+			url: '/api/upload',
 			type: 'POST',
 			data: new FormData($('#upload-form')[0]),
 			cache: false,
