@@ -82,6 +82,11 @@ app.post('/api/upload', (req, res) => {
 
 	let file = req.files.file;
 	let {filepath, subdir} = req.body;
+
+	if (subdir.length === 0) {
+		subdir = 'Videos';
+	}
+
 	if (subdir.slice(-1) !== '/') {
 		subdir += '/';
 	}
