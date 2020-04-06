@@ -4,6 +4,7 @@ const upload = require('express-fileupload');
 const app = express();
 const fs = require('fs');
 const AmdZip = require('adm-zip');
+require('dotenv').config();
 
 const search = require('./search');
 
@@ -45,16 +46,36 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/', (req, res) => {
-	let {username, password} = req.body;
-	console.log(username, password);
-	console.log(process.env);
+	const {username, password} = req.body;
+	const {UNAME: correctUsername, PWORD: correctPassword} = process.env;
+
+	if (username === correctUsername && password === correctPassword) {
+		req.session.loggedIn = true;
+	}
+
 	res.writeHead(302, {
 		'Location': '/'
 	})
 	res.end();
 })
 
+app.post('/api/signout', (req, res) => {
+	req.session.loggedIn = false;
+	res.writeHead(302, {
+		'Location': '/'
+	})
+	res.end()
+})
+
 app.post('/api/upload', (req, res) => {
+	if (!req.session.loggedIn) {
+		res.writeHead(302, {
+			'Location': '/'
+		})
+		res.end();
+		return;
+	}
+
 	if (!req.files || Object.keys(req.files).length === 0) {
 		return res.status(400).send('No files were uploaded.');
 	}
@@ -95,6 +116,13 @@ app.post('/api/upload', (req, res) => {
 });
 
 app.get('/api/newFolder', (req, res) => {
+	if (!req.session.loggedIn) {
+		res.writeHead(302, {
+			'Location': '/'
+		})
+		res.end();
+		return;
+	}
 	let {path} = req.query;
 	fs.exists(path, exists => {
 		if (!exists) {
@@ -107,6 +135,13 @@ app.get('/api/newFolder', (req, res) => {
 })
 
 app.get('/api/search', (req, res) => {
+	if (!req.session.loggedIn) {
+		res.writeHead(302, {
+			'Location': '/'
+		})
+		res.end();
+		return;
+	}
 	search.search(req, res);
 })
 
