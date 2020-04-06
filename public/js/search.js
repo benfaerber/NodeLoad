@@ -2,6 +2,7 @@ function updateSubdir() {
   const newDir = $('#subdir-select').val();
   $('#subdir').text(newDir);
   $('#subdir-form').val(newDir);
+  $('#filepath').val('');
 }
 
 function searchBlur() {
