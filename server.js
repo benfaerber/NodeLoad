@@ -2,6 +2,9 @@ const express = require('express');
 const session = require('express-session');
 const upload = require('express-fileupload');
 const app = express();
+const fs = require('fs');
+
+const search = require('./search');
 
 app.use('/static', express.static('public'));
 app.use(express.json());
@@ -42,6 +45,17 @@ app.post('/upload', (req, res) => {
 	}
 
 	let file = req.files.file;
+	let {filepath, subdir} = req.body;
+	if (subdir.slice(-1) !== '/') {
+		subdir += '/';
+	}
+
+	if (filepath.slice(-1) !== '/') {
+		filepath += '/';
+	}
+
+	let fullpath = `e:/${subdir}${filepath}${file.name}`;
+	console.log(fullpath);
 
 	file.mv(`./files/${file.name}`, (err) => {
 		if (err) return res.status(500).send(err);
@@ -49,5 +63,21 @@ app.post('/upload', (req, res) => {
 		res.send('File uploaded!');
 	});
 });
+
+app.get('/api/newFolder', (req, res) => {
+	let {path} = req.query;
+	fs.exists(path, exists => {
+		if (!exists) {
+			fs.mkdirSync(path);
+			res.json({status: 'ok'});
+		} else {
+			res.json({status: 'exists'});
+		}
+	});
+})
+
+app.get('/api/search', (req, res) => {
+	search.search(req, res);
+})
 
 app.listen(8080);

@@ -8,6 +8,8 @@
 		<link rel="stylesheet" href="/static/css/style.css" />
 		<script src="/static/js/jquery-3.4.1.min.js"></script>
 		<script src="/static/js/upload.js"></script>
+		<script src="/static/js/search.js"></script>
+		<script src="/static/js/newFolder.js"></script>
 	</head>
 	<body>
 		<div class="container">
@@ -17,23 +19,30 @@
 					<h3>Upload Files</h3>
 				</div>
 					<div class="card-body">
-						<form enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="subdir-select">Sub Directory</label>
+							<select class="form-control" id="subdir-select" onchange="updateSubdir()">
+								<option value="Videos">Videos</option>
+								<option value="Deutsche Musik">Deutsche Musik</option>
+								<option value="Music">Music</option>
+								<option value="Books">Books</option>
+							</select>
+						</div>
+						<form enctype="multipart/form-data" id="upload-form"> 
 							<div class="form-group">
 								<label class="control-label">Upload Path</label>
 								<div class="form-group">
 									<div class="input-group mb-3">
 										<div class="input-group-prepend">
-											<span class="input-group-text">E:/</span>
+											<span class="input-group-text">
+												E:/
+												<span id="subdir">Videos</span>/
+											</span>
 										</div>
 
-										<input type="text" class="form-control" aria-label="Amount (to the nearest dollar)" />
-										<div class="search-options dropdown-menu ">
-											<a class="dropdown-item" href="#">Action</a>
-											<a class="dropdown-item" href="#">Another action</a>
-											<a class="dropdown-item" href="#">Something else here</a>
-											<div class="dropdown-divider"></div>
-											<a class="dropdown-item" href="#">Clear Path</a>
-										</div>
+										<input type="hidden" value="" id="subdir-form" name="subdir"/>
+										<input type="text" class="form-control" id="filepath" name="filepath" onfocus="search()" oninput="search()"  onblur="searchBlur()"/>
+										<div id="search-results" class="search-options dropdown-menu"></div>
 										
 									</div>
 								</div>
@@ -63,6 +72,23 @@
 					<div id="upload-complete">
 
 					</div>
+				</div>
+			</div>
+			<!-- End Card -->
+
+			
+			<div class="card mt-5">
+				<div class="card-header">
+					<h3>New Folder</h3>
+				</div>
+				<div class="card-body">
+					<div class="form-group">
+						<label for="folder-name">Folder Name</label>
+						<input type="email" class="form-control" id="folder-name" placeholder="Folder Name" oninput="updateNewFolder()" onfocus="updateNewFolder()">
+						<small class="form-text text-muted" id="folder-location"></small>
+					</div>
+					<button id="new-folder-btn" class="btn btn-primary" onclick="newFolder()" disabled>Create New Folder</button>
+					<div class="text-success" id="folder-success"></div>
 				</div>
 			</div>
 		

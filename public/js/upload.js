@@ -4,7 +4,7 @@ $(() => {
 		$.ajax({
 			url: '/upload',
 			type: 'POST',
-			data: new FormData($('form')[0]),
+			data: new FormData($('#upload-form')[0]),
 			cache: false,
 			contentType: false,
 			processData: false,
