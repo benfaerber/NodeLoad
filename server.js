@@ -93,6 +93,7 @@ app.post('/api/upload', (req, res) => {
 	let partpath = `e:/${subdir}${filepath}`;
 	let fullpath = `${partpath}${file.name}`;
 	
+	console.log(`Attempting to upload ${file.name} to ${fullpath}...`);
 
 	fs.exists(fullpath, exists => {
 		if (!exists) {
@@ -145,4 +146,4 @@ app.get('/api/search', (req, res) => {
 	search.search(req, res);
 })
 
-app.listen(30173);
+app.listen(8082);
