@@ -3,6 +3,7 @@ const session = require('express-session');
 const upload = require('express-fileupload');
 const app = express();
 const fs = require('fs');
+const AmdZip = require('adm-zip');
 
 const search = require('./search');
 
@@ -28,7 +29,7 @@ app.use(
 	upload({
 		useTempFiles: true,
 		tempFileDir: '/tmp/',
-		limits: { fileSize: 50 * 1024 * 1024 },
+		limits: { fileSize: 50 * 1024 * 1024 * 1024 },
 		debug: false
 	})
 );
@@ -54,14 +55,29 @@ app.post('/upload', (req, res) => {
 		filepath += '/';
 	}
 
-	let fullpath = `e:/${subdir}${filepath}${file.name}`;
-	console.log(fullpath);
+	let partpath = `e:/${subdir}${filepath}`;
+	let fullpath = `${partpath}${file.name}`;
+	
 
-	file.mv(`./files/${file.name}`, (err) => {
-		if (err) return res.status(500).send(err);
+	fs.exists(fullpath, exists => {
+		if (!exists) {
+			file.mv(fullpath, (err) => {
+				if (err) return res.status(500).send(err);
+				console.log('File uploaded!');
+				res.send('File uploaded!');
 
-		res.send('File uploaded!');
-	});
+				if (fullpath.slice(-4) === '.zip') {
+					let zip = new AmdZip(fullpath);
+					zip.extractAllTo(partpath, false);
+					fs.unlinkSync(fullpath);
+				}
+
+			});
+		} else {
+			res.send('Error');
+			console.log('This file already exists!');
+		}
+	})
 });
 
 app.get('/api/newFolder', (req, res) => {

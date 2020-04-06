@@ -15,7 +15,6 @@ function search() {
 
   $.get(`/api/search?path=${path}&subdir=${subdir}`, data => {
     const {files} = data;
-    console.log(files);
     $('#search-results').addClass('show');
     $('#search-results').css('left', subdir === 'Deutsche Musik' ? '135px' : '80px');
 
